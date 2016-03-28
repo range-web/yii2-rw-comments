@@ -1,6 +1,6 @@
 <?php
 
-namespace rangeweb\filesystem;
+namespace rangeweb\comments;
 
 use Yii;
 
