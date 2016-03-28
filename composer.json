@@ -1,0 +1,22 @@
+{
+    "name": "range-web/yii2-rw-comments",
+    "description": "Yii2 comments",
+    "type": "yii2-extension",
+    "license": "GNU GPLv2",
+    "authors": [
+        {
+          "name": "rangeweb",
+          "email": "info@rangeweb.ru"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable" : true,
+    "require": {
+        "yiisoft/yii2": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "rangeweb\\filesystem\\": ""
+        }
+    }
+}
