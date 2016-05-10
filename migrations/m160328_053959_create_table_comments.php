@@ -13,8 +13,8 @@ class m160328_053959_create_table_comments extends Migration
             'text'=>'text',
             'note'=>'varchar(255)',
             'user_id'=>'int(10)',
-            'datetime_create' => 'datetime',
-            'datetime_update'=>'datetime',
+            'date_create' => 'datetime',
+            'date_update'=>'datetime',
             'status'=>'int(10)',
             'parent_id'=>'int(10)'
         ]);
