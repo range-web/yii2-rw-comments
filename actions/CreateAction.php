@@ -15,10 +15,34 @@ use rangeweb\comments\models\Comments;
 
 class CreateAction extends Action
 {
+    
     /**
      * @inheritdoc
      */
     public function run()
+    {
+
+        $model = new Comments(['scenario' => 'create']);
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $level = Yii::$app->request->get('level');
+            if ($level !== null) {
+                $level = $level < CommentsWidget::MAX_LEVEL ? $level + 1 : CommentsWidget::MAX_LEVEL;
+            } else {
+                $level = 0;
+            }
+            return [
+                'status' => true
+            ];
+        } else {
+            return ['status' => false, 'errors' => ActiveForm::validate($model)];
+        }
+    }
+    
+    
+    
+    /*public function run()
     {
 
         $model = new Comments(['scenario' => 'create']);
@@ -41,5 +65,5 @@ class CreateAction extends Action
         } else {
             return ['errors' => ActiveForm::validate($model)];
         }
-    }
+    }*/
 }

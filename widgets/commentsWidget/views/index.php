@@ -1,36 +1,45 @@
 <?php
-$count = count($models);
+$count = $dataProvider->getTotalCount();
+
+$title = str_replace('{title}',$title, $this->context->titleTemplate);
+$title = str_replace('{count}',$count, $title);
 ?>
 
 <div id="comments-widget">
-    <h2 id="comments"><?= $title ?> (<?=$count?>)</h2>
+    <?= $title ?>
 
     <?php if (!\Yii::$app->user->isGuest) { ?>
-        <a href="#" class="btn btn-primary pull-right create"><?= $createButtonTxt ?></a>
+        <?if($this->context->createBtuttonPosition == 'top'):?>
+            <a href="#" class="btn btn-primary pull-right create-comment"><?= $createButtonTxt ?></a>
+        <?endif;?>
+        <?= $this->render('_form', [
+            'model' => $model,
+            'sendButtonText' => $sendButtonText,
+            'cancelButtonText' => $cancelButtonText
+        ]) ?>
     <?php } ?>
 
-
-        <div class="comments col-md-12">
+        <div class="comments col-md-12 mb-20">
             <?php if ($count > 0) : ?>
-                <?= $this->render('_index_loop', [
-                    'models' => $models,
-                    'level' => $level,
-                    'maxLevel' => $maxLevel
-                ]) ?>
+                <?=
+                \yii\widgets\ListView::widget([
+                    'dataProvider' => $dataProvider,
+                    'layout' => '{items}{pager}',
+                    'itemView' => '_indexItem',
+                ]);
+                ?>
+<!--                --><?//= $this->render('_index_loop', [
+//                    'models' => $models,
+//                    'level' => $level,
+//                    'maxLevel' => $maxLevel
+//                ]) ?>
             <?php else : ?>
                 Отзывов пока нет
             <?php endif; ?>
         </div>
-
-        <?php if (!\Yii::$app->user->isGuest) { ?>
-            <div class="hide">
-                <?= $this->render('_form', [
-                    'model' => $model,
-                    'sendButtonText' => $sendButtonText,
-                    'cancelButtonText' => $cancelButtonText
-                ]) ?>
+        <?if($this->context->createBtuttonPosition == 'bottom'):?>
+            <div class="">
+                <a href="#" class="btn btn-primary pull-right create-comment"><?= $createButtonTxt ?></a>
             </div>
-        <?php } ?>
-    
-
+        <?endif;?>
 </div>

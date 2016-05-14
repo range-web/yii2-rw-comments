@@ -22,6 +22,7 @@ use yii\db\Expression;
  * @property string $date_update
  * @property integer $status
  * @property integer $parent_id
+ * @property integer $show_main
  */
 class Comments extends \yii\db\ActiveRecord
 {
@@ -42,7 +43,7 @@ class Comments extends \yii\db\ActiveRecord
         return [
             self::STATUS_PUBLIC => 'Опубликован',
             self::STATUS_MODERATE => 'Ожидает проверки',
-            self::STATUS_BAN => 'Забанен',
+            //self::STATUS_BAN => 'Забанен',
             self::STATUS_DELETE => 'Удален',
         ];
     }
@@ -82,6 +83,55 @@ class Comments extends \yii\db\ActiveRecord
         }
         return $comments;
     }
+
+    public static function countModerateComments()
+    {
+        $connection = Yii::$app->db;
+
+        $status = self::STATUS_MODERATE;
+
+        $model = $connection->createCommand("
+            SELECT object, COUNT(*) as cnt 
+            FROM tbl_comments 
+            WHERE status = $status
+            GROUP BY object");
+
+        $res = $model->queryAll();
+
+        $comments = [];
+
+        foreach ($res as $rs) {
+            $comments[$rs['object']] = $rs['cnt'];
+        }
+        
+        return $comments;
+    }
+
+    public static function getObjects($d=0)
+    {
+        $model = self::find()
+            ->select(['id', 'object'])
+            ->groupBy('object')
+            ->all();
+        
+        $objects = [];
+
+        $objectsTitle = Yii::$app->getModule('comments')->objectsTitle;
+        
+        foreach ($model as $obj) {
+            $objects[$obj->object] = self::getObjectTitle($obj->object, $d);
+        }
+
+        return $objects;
+    }
+    
+    public static function getObjectTitle($object, $d=0)
+    {
+        $objectsTitle = Yii::$app->getModule('comments')->objectsTitle;
+
+        return (isset($objectsTitle[$object])) ? $objectsTitle[$object][$d] : $object;
+    }
+    
 
     public function getContentText()
     {
@@ -129,7 +179,8 @@ class Comments extends \yii\db\ActiveRecord
     {
         return [
             [['text'], 'required', 'message' => 'Введите текст отзыва', 'on'=>'create'],
-            [['object_id', 'user_id', 'status', 'parent_id'], 'integer'],
+            [['object','object_id','user_id', 'date_create', 'status', 'text'], 'required', 'on'=>'admin-update'],
+            [['object_id', 'user_id', 'status', 'parent_id', 'show_main'], 'integer'],
             [['text'], 'string'],
             [['date_create', 'date_update'], 'safe'],
             [['object'], 'string', 'max' => 100],
@@ -144,15 +195,16 @@ class Comments extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'object' => 'Object',
-            'object_id' => 'Object ID',
-            'text' => 'Text',
-            'note' => 'Note',
-            'user_id' => 'User ID',
-            'date_create' => 'Date Create',
-            'date_update' => 'Date Update',
-            'status' => 'Status',
+            'object' => 'Кому',
+            'object_id' => 'ID объекта',
+            'text' => 'Текст отзыва',
+            'note' => 'Комментарий модератора',
+            'user_id' => 'Кто оставил отзыв',
+            'date_create' => 'Дата создания',
+            'date_update' => 'Дата последнего обновления',
+            'status' => 'Статус',
             'parent_id' => 'Parent ID',
+            'show_main' => 'Показывать на главной',
         ];
     }
 
@@ -217,21 +269,31 @@ class Comments extends \yii\db\ActiveRecord
             } else {
                 $this->status = self::STATUS_PUBLIC;
             }
+            if ($this->show_main == null) {
+                $this->show_main = 1;
+            }
         }
 
         if ($this->date_create == null) {
-            return $this->date_create = DateHelper::setFormatDateTime();
+            $this->date_create = DateHelper::setFormatDateTime();
+        } else {
+            $this->date_create = DateHelper::setFormatDateTime($this->date_create);
         }
 
-        if ($this->scenario === 'delete') {
+
+
+        /*if ($this->scenario === 'delete') {
             $this->status = self::STATUS_DELETE;
-        }
+        }*/
 
         return parent::beforeSave($insert);
     }
 
     public function afterFind()
     {
+        $this->date_create = DateHelper::getFormatDateTime($this->date_create);
+        $this->date_update = DateHelper::getFormatDateTime($this->date_update);
+
         return parent::afterFind();
     }
 
