@@ -141,7 +141,7 @@ class CommentsWidget extends Widget
                     }
             });");
         } else {
-            CommentsGuestAsset::register($view);
+            //CommentsGuestAsset::register($view);
         }
     }
 } 

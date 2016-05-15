@@ -31,7 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ]) ?>
     </p>
 
-    <?php Pjax::begin(['id' => 'comments-list']); ?>
+    <?php Pjax::begin(['id' => 'comments-list','timeout'=>10000]); ?>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
