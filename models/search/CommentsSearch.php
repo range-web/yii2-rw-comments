@@ -12,6 +12,8 @@ use yii\data\ActiveDataProvider;
  */
 class CommentsSearch extends Comments
 {
+    public $orderBy = 'date_create DESC';
+
     /**
      * @inheritdoc
      */
@@ -47,7 +49,9 @@ class CommentsSearch extends Comments
         }
         
         $query = Comments::find();
-        
+
+        $query->orderBy($this->orderBy);
+
         if (isset($addParams['limit'])) {
             $query->limit($addParams['limit']);
         }

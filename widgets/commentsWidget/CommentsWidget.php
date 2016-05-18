@@ -47,6 +47,8 @@ class CommentsWidget extends Widget
     public $createBtuttonPosition = 'top';
 
     public $paginationParams = [];
+    
+    public $orderBy;
     /**
      * @inheritdoc
      */
@@ -88,6 +90,10 @@ class CommentsWidget extends Widget
         $searchModel->object = $this->object;
         $searchModel->object_id = $this->object_id;
 
+        if ($this->orderBy != null) {
+            $searchModel->orderBy = $this->orderBy;
+        }
+        
         if ($this->showPublic) {
             $searchModel->status = Comments::STATUS_PUBLIC;
         }

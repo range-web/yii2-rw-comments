@@ -8,7 +8,7 @@ $class = 'lvl-' . $level;
 ?>
 
 
-<li>
+
     <div class="comment <?= $class ?>" id="comment-<?= $model->id ?>" data-parent="<?= $model->parent_id ?>">
         <div class="comment-author">
             <?= Html::a('', '/profile/'.$model->user_id, [
@@ -31,4 +31,3 @@ $class = 'lvl-' . $level;
             </div>
         </div>
     </div>
-</li>
