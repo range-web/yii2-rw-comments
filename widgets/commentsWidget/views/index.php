@@ -3,12 +3,18 @@ $count = $dataProvider->getTotalCount();
 
 $title = str_replace('{title}',$title, $this->context->titleTemplate);
 $title = str_replace('{count}',$count, $title);
+
+$canNewComment = true;
+if ($this->context->object == 'User' && $this->context->object_id == Yii::$app->user->id) {
+    $canNewComment = false;
+}
+
 ?>
 
 <div id="comments-widget">
     <?= $title ?>
 
-    <?php if (!\Yii::$app->user->isGuest) { ?>
+    <?php if (!\Yii::$app->user->isGuest && $canNewComment) { ?>
         <?if($this->context->createBtuttonPosition == 'top'):?>
             <a href="#" class="btn btn-primary pull-right create-comment"><?= $createButtonTxt ?></a>
         <?endif;?>
@@ -37,7 +43,7 @@ $title = str_replace('{count}',$count, $title);
                 Отзывов пока нет
             <?php endif; ?>
         </div>
-        <?if($this->context->createBtuttonPosition == 'bottom'):?>
+        <?if(!\Yii::$app->user->isGuest && $this->context->createBtuttonPosition == 'bottom' && $canNewComment):?>
             <div class="">
                 <a href="#" class="btn btn-primary pull-right create-comment"><?= $createButtonTxt ?></a>
             </div>
