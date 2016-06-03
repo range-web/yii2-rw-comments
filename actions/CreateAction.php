@@ -15,6 +15,7 @@ use rangeweb\comments\models\Comments;
 
 class CreateAction extends Action
 {
+    public $callback;
     
     /**
      * @inheritdoc
@@ -32,6 +33,10 @@ class CreateAction extends Action
             } else {
                 $level = 0;
             }
+
+            if ($this->callback != null) {
+                $this->callback($model);
+            }
             return [
                 'status' => true
             ];
@@ -39,7 +44,21 @@ class CreateAction extends Action
             return ['status' => false, 'errors' => ActiveForm::validate($model)];
         }
     }
-    
+
+
+    /**
+     * @param $model
+     * @return mixed
+     * @throws InvalidConfigException
+     */
+    protected function callback($model)
+    {
+        if (!is_callable($this->callback)) {
+            throw new InvalidConfigException('"' . get_class($this) . '::callback" should be a valid callback.');
+        }
+        $response = call_user_func($this->callback, $model);
+        return $response;
+    }
     
     
     /*public function run()

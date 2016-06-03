@@ -17,7 +17,7 @@ use rangeweb\comments\models\Comments;
         <div class="col-lg-12">
             <?= $form->field($model, 'object')->dropDownList(Comments::getObjects(1), array('prompt'=>'')) ?>
             <?= $form->field($model, 'object_id')->textInput() ?>
-            <?= $form->field($model, 'user_id')->textInput() ?>
+            <?= $form->field($model, 'user_id')->dropDownList(\common\modules\users\models\User::getUsersRoleUser(), ['prompt'=>'Выберите пользователя']) ?>
             <?= $form->field($model, 'date_create')->textInput(['class' => 'datepicker form-control']) ?>
             <?= $form->field($model, 'text')->textarea(['rows' => 5]) ?>
             <?= $form->field($model, 'show_main')->checkbox() ?>

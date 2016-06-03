@@ -43,6 +43,8 @@ class CommentsWidget extends Widget
     public $showMain = false;
     public $maxLength = 255;
     
+    public $createComment = true;
+    
     public $titleTemplate = '<h2>{title}</h2>';
     public $createBtuttonPosition = 'top';
 

@@ -5,10 +5,10 @@ $title = str_replace('{title}',$title, $this->context->titleTemplate);
 $title = str_replace('{count}',$count, $title);
 
 $canNewComment = true;
-if ($this->context->object == 'User' && $this->context->object_id == Yii::$app->user->id) {
-    $canNewComment = false;
-}
 
+if (!$this->context->createComment) {
+    $canNewComment = false;
+} 
 ?>
 
 <div id="comments-widget">
